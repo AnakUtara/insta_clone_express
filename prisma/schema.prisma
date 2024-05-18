@@ -1,0 +1,111 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id               Int          @id @default(autoincrement())
+  username         String       @unique @db.VarChar(25)
+  password         String       @db.VarChar(25)
+  email            String       @unique @db.VarChar(25)
+  profile          Profile?
+  post             Post[]
+  comment          Comment[]
+  like             Like[]
+  user_follows     UserFollow[] @relation("UserThatFollows")
+  followed_by_user UserFollow[] @relation("FollowedUser")
+  created_at       DateTime     @default(now())
+
+  @@map("users")
+}
+
+enum Gender {
+  Male
+  Female
+}
+
+model Profile {
+  id            Int       @id
+  first_name    String?   @db.VarChar(25)
+  last_name     String?   @db.VarChar(25)
+  gender        Gender?
+  bio           String?   @db.MediumText
+  date_of_birth DateTime? @db.Date
+  phone_number  String?   @db.VarChar(12)
+  address       String?   @db.Text
+  avatar        String?
+  user          User      @relation(fields: [id], references: [id])
+  updated_at    DateTime  @updatedAt
+
+  @@map("profiles")
+}
+
+enum Status {
+  Draft
+  Posted
+}
+
+model Post {
+  id         Int       @id @default(autoincrement())
+  image      String
+  caption    String    @db.Text
+  user_id    Int
+  user       User      @relation(fields: [user_id], references: [id])
+  status     Status    @default(Draft)
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  comment    Comment[]
+  like       Like[]
+
+  @@map("posts")
+}
+
+enum Flag {
+  Safe
+  Unsafe
+}
+
+model Comment {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id])
+  post_id    Int
+  post       Post     @relation(fields: [post_id], references: [id])
+  comment    String   @db.MediumText
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  flag       Flag
+
+  @@map("comments")
+}
+
+model Like {
+  post_id    Int
+  post       Post     @relation(fields: [post_id], references: [id])
+  user_id    Int
+  user       User     @relation(fields: [user_id], references: [id])
+  created_at DateTime @default(now())
+
+  @@id([post_id, user_id])
+  @@map("likes")
+}
+
+model UserFollow {
+  user_id          Int
+  user             User @relation("UserThatFollows", fields: [user_id], references: [id])
+  followed_user_id Int
+  follow_user      User @relation("FollowedUser", fields: [followed_user_id], references: [id])
+
+  @@id([user_id, followed_user_id])
+  @@map("user_follows")
+}

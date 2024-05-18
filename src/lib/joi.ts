@@ -1,0 +1,21 @@
+import Joi from "joi";
+
+export const registerSchema = Joi.object({
+	username: Joi.string().alphanum().min(3).max(30).trim().required(),
+	password: Joi.string()
+		.pattern(new RegExp("^[a-zA-Z0-9]{3,30}$"))
+		.trim()
+		.required(),
+	email: Joi.string()
+		.trim()
+		.email({
+			minDomainSegments: 2,
+			tlds: { allow: ["com", "net"] },
+		})
+		.required(),
+});
+
+export const postSchema = Joi.object({
+	caption: Joi.string().max(1000).trim().required(),
+	user_id: Joi.number().required(),
+});
