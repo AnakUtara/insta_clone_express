@@ -15,13 +15,13 @@ class AuthRouter extends EntityRouter {
 		this.initRouter();
 	}
 	private initRouter() {
+		this.router.post("/v1", authenticate, this.authController.login);
 		this.router.post(
-			"/register",
+			"/v2",
 			checkRegisInputs,
 			checkExistingUser,
 			usersController.create.bind(usersController)
 		);
-		this.router.post("/login", authenticate, this.authController.login);
 	}
 }
 

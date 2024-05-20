@@ -14,17 +14,24 @@ datasource db {
 }
 
 model User {
-  id               Int          @id @default(autoincrement())
-  username         String       @unique @db.VarChar(25)
-  password         String       @db.VarChar(25)
-  email            String       @unique @db.VarChar(25)
-  profile          Profile?
+  id               String       @id @default(cuid())
+  username         String       @unique @db.VarChar(55)
+  password         String
+  email            String       @unique @db.VarChar(55)
+  fullname         String       @db.VarChar(55)
+  gender           Gender?
+  bio              String?      @db.MediumText
+  date_of_birth    DateTime?    @db.Date
+  phone_number     String?      @db.VarChar(12)
+  address          String?      @db.Text
+  avatar           String?
+  created_at       DateTime     @default(now())
+  updated_at       DateTime     @updatedAt
   post             Post[]
   comment          Comment[]
   like             Like[]
   user_follows     UserFollow[] @relation("UserThatFollows")
   followed_by_user UserFollow[] @relation("FollowedUser")
-  created_at       DateTime     @default(now())
 
   @@map("users")
 }
@@ -32,22 +39,6 @@ model User {
 enum Gender {
   Male
   Female
-}
-
-model Profile {
-  id            Int       @id
-  first_name    String?   @db.VarChar(25)
-  last_name     String?   @db.VarChar(25)
-  gender        Gender?
-  bio           String?   @db.MediumText
-  date_of_birth DateTime? @db.Date
-  phone_number  String?   @db.VarChar(12)
-  address       String?   @db.Text
-  avatar        String?
-  user          User      @relation(fields: [id], references: [id])
-  updated_at    DateTime  @updatedAt
-
-  @@map("profiles")
 }
 
 enum Status {
@@ -59,7 +50,7 @@ model Post {
   id         Int       @id @default(autoincrement())
   image      String
   caption    String    @db.Text
-  user_id    Int
+  user_id    String
   user       User      @relation(fields: [user_id], references: [id])
   status     Status    @default(Draft)
   created_at DateTime  @default(now())
@@ -77,7 +68,7 @@ enum Flag {
 
 model Comment {
   id         Int      @id @default(autoincrement())
-  user_id    Int
+  user_id    String
   user       User     @relation(fields: [user_id], references: [id])
   post_id    Int
   post       Post     @relation(fields: [post_id], references: [id])
@@ -92,7 +83,7 @@ model Comment {
 model Like {
   post_id    Int
   post       Post     @relation(fields: [post_id], references: [id])
-  user_id    Int
+  user_id    String
   user       User     @relation(fields: [user_id], references: [id])
   created_at DateTime @default(now())
 
@@ -101,10 +92,10 @@ model Like {
 }
 
 model UserFollow {
-  user_id          Int
-  user             User @relation("UserThatFollows", fields: [user_id], references: [id])
-  followed_user_id Int
-  follow_user      User @relation("FollowedUser", fields: [followed_user_id], references: [id])
+  user_id          String
+  user             User   @relation("UserThatFollows", fields: [user_id], references: [id])
+  followed_user_id String
+  follow_user      User   @relation("FollowedUser", fields: [followed_user_id], references: [id])
 
   @@id([user_id, followed_user_id])
   @@map("user_follows")

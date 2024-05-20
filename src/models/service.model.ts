@@ -1,17 +1,14 @@
-import { Request } from "express";
-import { TProfile, TUser } from "./user.model";
+// import { Request } from "express";
+import { ReqUser as Request } from "../models/global.model";
+import { TUser } from "./user.model";
 import { TPost, TUserPost } from "./post.model";
 
 export interface IService extends ICustomService {
-	getAll: () => Promise<TUser[] | TProfile[] | TPost[] | TPost[] | TUserPost[]>;
-	getById: (
-		req: Request
-	) => Promise<TUser | TProfile | TPost | TUserPost | null>;
-	create: (
-		req: Request
-	) => Promise<void | TUser | TProfile | TPost | TUserPost>;
-	delete: (req: Request) => Promise<TUser | TProfile | TPost | TUserPost>;
-	update: (req: Request) => Promise<TUser | TProfile | TPost | TUserPost>;
+	getAll: () => Promise<TUser[] | TPost[] | TUserPost[]>;
+	getById: (req: Request) => Promise<TUser | TPost | TUserPost | null>;
+	create: (req: Request) => Promise<void | TUser | TPost | TUserPost>;
+	delete: (req: Request) => Promise<TUser | TPost | TUserPost>;
+	update: (req: Request) => Promise<TUser | TPost | TUserPost>;
 }
 
 interface ICustomService {

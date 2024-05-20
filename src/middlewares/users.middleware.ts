@@ -11,9 +11,9 @@ export async function checkUserExistById(
 	try {
 		const { id } = req.params;
 		const isExist = (await prisma.user.findFirst({
-			where: { id: Number(id) },
+			where: { id },
 			select: { id: true },
-		})) as { id: number };
+		})) as { id: string };
 		validateOrThrow(!isExist, "User does not exist.");
 		next();
 	} catch (error) {

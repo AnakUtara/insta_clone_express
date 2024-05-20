@@ -1,7 +1,7 @@
-import { Request } from "express";
 import { prisma } from "../lib/prisma";
 import { throwError } from "../utils/validator";
-
+import { Prisma } from "@prisma/client";
+import { ReqUser as Request } from "../models/global.model";
 class PostsService {
 	async getAll() {
 		const data = await prisma.post.findMany({
@@ -17,7 +17,17 @@ class PostsService {
 	async create(req: Request) {
 		return await prisma.$transaction(async (prisma) => {
 			try {
-				await prisma.post.create({ data: req.body });
+				const { image, caption } = req.body;
+				const data: Prisma.PostCreateInput = {
+					image,
+					caption,
+					user: {
+						connect: {
+							id: req.user?.id,
+						},
+					},
+				};
+				await prisma.post.create({ data });
 			} catch (error: unknown) {
 				throwError(error);
 			}

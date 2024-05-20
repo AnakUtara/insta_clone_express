@@ -9,13 +9,10 @@ export async function checkPostInput(
 	next: NextFunction
 ) {
 	try {
-		const { image, caption, user_id, status } = req.body;
-		validateOrThrow(
-			!image || !caption || !user_id || !status,
-			"Must fill all fields."
-		);
-		const { error } = postSchema.validate(caption, user_id);
-		if (error) throw error;
+		const { image, caption } = req.body;
+		validateOrThrow(!image || !caption, "Must fill all fields.");
+		// const { error } = postSchema.validate(caption);
+		// if (error) throw error;
 		next();
 	} catch (error) {
 		next(error);

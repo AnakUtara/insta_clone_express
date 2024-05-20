@@ -1,4 +1,3 @@
-import profileController from "../controllers/profile.controller";
 import usersController from "../controllers/users.controller";
 import {
 	checkUpdateUserForm,
@@ -13,14 +12,6 @@ class UsersRouter extends EntityRouter {
 	}
 	private initRouter() {
 		this.router.get("/", usersController.getAll.bind(usersController));
-		this.router.get(
-			"/profile",
-			profileController.getAll.bind(profileController)
-		);
-		this.router.post(
-			"/profile",
-			profileController.create.bind(profileController)
-		);
 		this.router.patch(
 			"/:id",
 			checkUpdateUserForm,
@@ -41,16 +32,6 @@ class UsersRouter extends EntityRouter {
 			"/:id/posts",
 			checkUserExistById,
 			usersController.getPostsById.bind(usersController)
-		);
-		this.router.patch(
-			"/:id/profile",
-			checkUserExistById,
-			profileController.update.bind(profileController)
-		);
-		this.router.get(
-			"/:id/profile",
-			checkUserExistById,
-			profileController.getById.bind(profileController)
 		);
 	}
 }

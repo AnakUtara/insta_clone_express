@@ -1,4 +1,5 @@
 import postsController from "../controllers/posts.controller";
+import { verifyToken } from "../middlewares/auth.middleware";
 import {
 	checkPostExistById,
 	checkPostInput,
@@ -15,6 +16,7 @@ class PostsRouter extends EntityRouter {
 		this.router.get("/", postsController.getAll.bind(postsController));
 		this.router.post(
 			"/",
+			verifyToken,
 			checkPostInput,
 			postsController.create.bind(postsController)
 		);

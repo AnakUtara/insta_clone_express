@@ -4,7 +4,7 @@ export type TPost = {
 	id?: number;
 	image: string;
 	caption: string;
-	user_id: number;
+	user_id: string;
 	status: Status;
 	created_at?: Date;
 	updated_at?: Date;
